@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef } from "react";
 
 export const VerifyEmail = () => {
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
@@ -28,6 +28,7 @@ export const VerifyEmail = () => {
     idx: number,
     e: React.KeyboardEvent<HTMLInputElement>
   ) => {
+    // !opt[idx] we only want to move backward if input field is empty
     if (e.key === "Backspace" && !otp[idx] && idx > 0) {
       inputRefs.current[idx - 1]?.focus();
     }
@@ -78,3 +79,16 @@ export const VerifyEmail = () => {
     </div>
   );
 };
+
+// useRef functionality
+// 1. Create an empty array where inputsRef.current = []
+// 2. React will call the ref function for every iteration.
+//     ref={(el) => (inputRefs.current[idx] = el)}
+// 3. el represents the actual DOM element (<input />) when React renders the component.
+// inputRefs.current[idx] = el; means storing this input element in the inputRefs.current array at position idx.
+// 4. So, inputRefs.current array will look like this -> [<input />, <input />, ...<input />]
+// 5. NOTE: we are storing the 'reference' the of the 'input field' not the actual input fields.
+// 6. Although, I said 'el' represent DOM element, it means the 'reference' of the element.
+// 6. Using idx we can navigate to these references.
+
+// NOTE: ref function runs when input mounts or updates
