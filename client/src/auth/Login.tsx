@@ -2,12 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { LoginInputState } from "@/schema/userSchema";
+import { LoginInputState, userLoginSchema } from "@/schema/userSchema";
 
 import { Loader2, LockKeyhole, Mail } from "lucide-react";
 import { useState, ChangeEvent, FormEvent } from "react";
 import { Link } from "react-router-dom";
-
 
 export const Login = () => {
   const loading = false;
@@ -15,14 +14,23 @@ export const Login = () => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState<Partial<LoginInputState>>({});
 
   const changeEventHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setLoginInput({ ...loginInput, [e.target.name]: e.target.value });
   };
 
   const formSubmitHandler = (e: FormEvent) => {
-    console.log(e);
     e.preventDefault();
+
+    // validation check
+    const result = userLoginSchema.safeParse(loginInput);
+
+    if (!result.success) {
+      const validationErr = result.error.formErrors.fieldErrors;
+      setError(validationErr as Partial<LoginInputState>);
+      return;
+    }
   };
 
   return (
@@ -40,6 +48,7 @@ export const Login = () => {
             onChange={changeEventHandler}
           />
           <Mail className="absolute inset-y-8 left-2 text-gray-500 pointer-events-none" />
+          {error && <span className="text-xs text-red-500">{error.email}</span>}
         </div>
         <div className="mb-4 relative">
           <Label>Password</Label>
@@ -52,6 +61,9 @@ export const Login = () => {
             onChange={changeEventHandler}
           />
           <LockKeyhole className="absolute inset-y-8 left-2 text-gray-500 pointer-events-none" />
+          {error && (
+            <span className="text-xs text-red-500">{error.password}</span>
+          )}
         </div>
 
         {loading ? (
@@ -67,6 +79,12 @@ export const Login = () => {
             Login
           </Button>
         )}
+
+        <div className="my-3 text-center">
+          <Link to="/forget-password" className="text-sm text-blue-500">
+            Forget Password
+          </Link>
+        </div>
 
         <Separator />
         <p className="mt-2">

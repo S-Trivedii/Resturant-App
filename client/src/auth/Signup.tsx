@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { RegisterInputState, userSignSchema } from "@/schema/userSchema";
+import { RegisterInputState, userSignupSchema } from "@/schema/userSchema";
 
 import { Loader2, LockKeyhole, Mail, PhoneCall, User } from "lucide-react";
 import { useState, ChangeEvent, FormEvent } from "react";
@@ -16,6 +16,7 @@ export const Signup = () => {
     password: "",
     contact: "",
   });
+  const [error, setError] = useState<Partial<RegisterInputState>>({});
 
   const changeEventHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setRegisterInput({ ...registerInput, [e.target.name]: e.target.value });
@@ -24,8 +25,15 @@ export const Signup = () => {
   const formSubmitHandler = (e: FormEvent) => {
     e.preventDefault();
 
-    const result = userSignSchema.safeParse(registerInput);
-    console.log("Result ", result); // {success: true, data: {...}}
+    const result = userSignupSchema.safeParse(registerInput);
+    // console.log(result); {success: true, data: {...}}
+
+    // validation failed
+    if (!result.success) {
+      const validationError = result.error.formErrors.fieldErrors;
+      setError(validationError as Partial<RegisterInputState>);
+      return;
+    }
   };
 
   return (
@@ -43,6 +51,9 @@ export const Signup = () => {
             onChange={changeEventHandler}
           />
           <User className="absolute inset-y-8 left-2 text-gray-500 pointer-events-none" />
+          {error && (
+            <span className="text-xs text-red-500">{error.fullname}</span>
+          )}
         </div>
         <div className="mb-4 relative">
           <Label>Email</Label>
@@ -55,6 +66,7 @@ export const Signup = () => {
             onChange={changeEventHandler}
           />
           <Mail className="absolute inset-y-8 left-2 text-gray-500 pointer-events-none" />
+          {error && <span className="text-xs text-red-500">{error.email}</span>}
         </div>
         <div className="mb-4 relative">
           <Label>Password</Label>
@@ -67,6 +79,9 @@ export const Signup = () => {
             onChange={changeEventHandler}
           />
           <LockKeyhole className="absolute inset-y-8 left-2 text-gray-500 pointer-events-none" />
+          {error && (
+            <span className="text-xs text-red-500">{error.password}</span>
+          )}
         </div>
 
         <div className="mb-4 relative">
@@ -80,6 +95,9 @@ export const Signup = () => {
             onChange={changeEventHandler}
           />
           <PhoneCall className="absolute inset-y-8 left-2 text-gray-500 pointer-events-none" />
+          {error && (
+            <span className="text-xs text-red-500">{error.contact}</span>
+          )}
         </div>
 
         {loading ? (
