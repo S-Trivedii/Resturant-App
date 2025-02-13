@@ -1,19 +1,70 @@
-import { Plus } from "lucide-react";
+import { useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useRef } from "react";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Button } from "./ui/button";
+import {
+  Loader2,
+  LocateIcon,
+  Mail,
+  MapPin,
+  MapPinnedIcon,
+  Plus,
+} from "lucide-react";
 
 export const Profile = () => {
   const imageRef = useRef<HTMLInputElement>(null);
+  const [selectedProfilePicture, setSelectedProfilePicture] =
+    useState<string>("");
+
+  const [profileData, setProfileData] = useState({
+    fullname: "",
+    email: "",
+    address: "",
+    city: "",
+    country: "",
+    profilePicture: "",
+  });
+
+  const loading = false;
 
   const fileChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    console.log("file, ", file);
+    if (file) {
+      // instance of FileReader
+      const reader = new FileReader();
+
+      // This function (onloaded) runs when file reading is finished
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setSelectedProfilePicture(result);
+        setProfileData((prevData) => ({
+          ...prevData,
+          profilePicture: result,
+        }));
+      };
+
+      // This starts reading the file
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setProfileData({ ...profileData, [name]: value });
+  };
+
+  const updateProfileHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log("Profiledata ", profileData);
   };
   return (
-    <form className="max-w-7xl mx-auto my-5">
+    <form onSubmit={updateProfileHandler} className="max-w-7xl mx-auto my-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Avatar className="relative md:w-28 md:h-28 w-20 h-20">
-            <AvatarImage />
+            <AvatarImage src={selectedProfilePicture} />
             <AvatarFallback className="flex items-center justify-center w-full h-full text-lg font-bold">
               CN
             </AvatarFallback>
@@ -31,7 +82,77 @@ export const Profile = () => {
               <Plus className="text-white w-10 h-10" />
             </div>
           </Avatar>
+          <Input
+            type="text"
+            name="fullname"
+            value={profileData.fullname}
+            onChange={changeHandler}
+            className="font-bold text-2xl outline-none border-none focus-visible:ring-transparent"
+          />
         </div>
+
+        <div className="grid md:grid-cols-4 md:gap-2 gap-3 my-10">
+          <div className="flex items-center gap-4 rounded-sm p-2 bg-gray-200">
+            <Mail className="text-gray-500" />
+            <div className="w-full">
+              <Label>Email</Label>
+              <input
+                name="email"
+                value={profileData.email}
+                onChange={changeHandler}
+                className="w-full text-gray-600 bg-transparent focus-visible:ring-0 focus-visible:border-transparent outline-none border-none"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-4 rounded-sm p-2 bg-gray-200">
+            <LocateIcon className="text-gray-500" />
+            <div className="w-full">
+              <Label>Address</Label>
+              <input
+                name="address"
+                value={profileData.address}
+                onChange={changeHandler}
+                className="w-full text-gray-600 bg-transparent focus-visible:ring-0 focus-visible:border-transparent outline-none border-none"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-4 rounded-sm p-2 bg-gray-200">
+            <MapPin className="text-gray-500" />
+            <div className="w-full">
+              <Label>City</Label>
+              <input
+                name="city"
+                value={profileData.city}
+                onChange={changeHandler}
+                className="w-full text-gray-600 bg-transparent focus-visible:ring-0 focus-visible:border-transparent outline-none border-none"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-4 rounded-sm p-2 bg-gray-200">
+            <MapPinnedIcon className="text-gray-500" />
+            <div className="w-full">
+              <Label>Country</Label>
+              <input
+                name="country"
+                value={profileData.country}
+                onChange={changeHandler}
+                className="w-full text-gray-600 bg-transparent focus-visible:ring-0 focus-visible:border-transparent outline-none border-none"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="text-center">
+        {loading ? (
+          <Button disabled className="bg-orange hover:bg-hoverOrange">
+            <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+            Please wait
+          </Button>
+        ) : (
+          <Button type="submit" className="bg-orange hover:bg-hoverOrange">
+            Update
+          </Button>
+        )}
       </div>
     </form>
   );
@@ -46,3 +167,10 @@ export const Profile = () => {
 // Since it is a file type, it will open file-system
 
 // something.current always point to an acutal DOM element after mounting using ref
+
+// -------------------------
+
+// readAsDataURL - is a method of the FileReader API that reads the content of a file (usually an image, PDF, or other media) and converts it into a Base64-encoded data URL.
+
+// Direct destructuring (...profileData)	When the update happens synchronously, and we are sure that profileData is up to date.
+// Functional update ((prevData) => {...prevData})	When updating state inside an async callback (e.g., onloadend, useEffect, API calls) to avoid stale state issues.
