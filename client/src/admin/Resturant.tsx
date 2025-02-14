@@ -1,18 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  resturantFormSchema,
+  ResturantFormSchema,
+} from "@/schema/resturantSchema";
 import { Loader2 } from "lucide-react";
 import { FormEvent, useState } from "react";
 
 export const Resturant = () => {
-  const [input, setInput] = useState({
+  const [input, setInput] = useState<ResturantFormSchema>({
     resturantName: "",
     city: "",
     country: "",
     deliveryTime: 0,
-    cusinies: [] as string[],
-    imageFile: undefined as File | undefined,
+    cuisine: [],
+    imageFile: undefined,
   });
+
+  const [errors, setErrors] = useState<Partial<ResturantFormSchema>>({});
 
   const loading = false;
   const resturantHai = false;
@@ -24,7 +30,14 @@ export const Resturant = () => {
 
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(input);
+
+    const result = resturantFormSchema.safeParse(input);
+    if (!result.success) {
+      const fieldErrors = result.error.formErrors.fieldErrors;
+      setErrors(fieldErrors as Partial<ResturantFormSchema>);
+
+      return;
+    }
   };
 
   return (
@@ -43,6 +56,11 @@ export const Resturant = () => {
                   onChange={changeEventHandler}
                   name="resturantName"
                 />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.resturantName}
+                  </span>
+                )}
               </div>
               <div>
                 <Label>City</Label>
@@ -53,6 +71,11 @@ export const Resturant = () => {
                   onChange={changeEventHandler}
                   name="city"
                 />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.city}
+                  </span>
+                )}
               </div>
               <div>
                 <Label>Country</Label>
@@ -63,6 +86,11 @@ export const Resturant = () => {
                   onChange={changeEventHandler}
                   name="country"
                 />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.country}
+                  </span>
+                )}
               </div>
               <div>
                 <Label>Delivery Time</Label>
@@ -73,21 +101,31 @@ export const Resturant = () => {
                   onChange={changeEventHandler}
                   name="deliveryTime"
                 />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.deliveryTime}
+                  </span>
+                )}
               </div>
               <div>
-                <Label>Cusinies</Label>
+                <Label>Cuisines</Label>
                 <Input
                   type="text"
                   placeholder="e.g. Pasta, Biryani"
-                  value={input.cusinies}
+                  value={input.cuisine}
                   onChange={(e) =>
                     setInput({
                       ...input,
-                      cusinies: e.target.value.split(","),
+                      cuisine: e.target.value.split(","),
                     })
                   }
-                  name="cusinies"
+                  name="cuisine"
                 />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.cuisine}
+                  </span>
+                )}
               </div>
               <div>
                 <Label>Upload Resturant Banner</Label>
@@ -102,6 +140,11 @@ export const Resturant = () => {
                   }
                   name="imageFile"
                 />
+                {errors && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {errors.imageFile?.name}
+                  </span>
+                )}
               </div>
             </div>
             <div className="my-5 w-fit">
