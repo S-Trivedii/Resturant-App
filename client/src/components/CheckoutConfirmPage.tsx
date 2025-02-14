@@ -38,6 +38,7 @@ export const CheckoutConfirmPage = ({
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
+      {/* open and onOpenChange are Dialog built in property */}
       <DialogContent>
         <DialogTitle className="font-semibold">Review Your Order</DialogTitle>
         <DialogDescription className="text-xs">

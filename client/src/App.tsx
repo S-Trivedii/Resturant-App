@@ -12,6 +12,7 @@ import { Profile } from "./components/Profile";
 import { SearchPage } from "./components/SearchPage";
 import { ResturantDetail } from "./components/ResturantDetail";
 import { Cart } from "./components/Cart";
+import { Resturant } from "./admin/Resturant";
 
 const appRouter = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const appRouter = createBrowserRouter([
       {
         path: "/cart",
         element: <Cart />,
+      },
+      {
+        path: "/admin/resturant",
+        element: <Resturant />,
       },
     ],
   },
