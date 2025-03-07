@@ -31,6 +31,7 @@ export const Resturant = () => {
   const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Validation check
     const result = resturantFormSchema.safeParse(input);
     if (!result.success) {
       const fieldErrors = result.error.formErrors.fieldErrors;

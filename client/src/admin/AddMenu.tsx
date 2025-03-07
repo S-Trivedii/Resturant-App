@@ -14,14 +14,7 @@ import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import Image from "@/assets/hero_pizza.png";
 import { EditMenu } from "./EditMenu";
-import { MenuFormSchema } from "@/schema/menuSchema";
-
-// type Menu = {
-//   name: string;
-//   description: string;
-//   price: number;
-//   image: string | File | undefined;
-// };
+import { MenuFormSchema, menuSchema } from "@/schema/menuSchema";
 
 const menus = [
   {
@@ -48,6 +41,7 @@ export const AddMenu = () => {
 
   const [open, setOpen] = useState<boolean>(false);
   const [editOpen, setEditOpen] = useState<boolean>(false);
+  const [error, setError] = useState<Partial<MenuFormSchema>>({});
   const loading = false;
 
   // Select menu for edit
@@ -61,8 +55,22 @@ export const AddMenu = () => {
     });
   };
 
+  // API + Validation result
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const result = menuSchema.safeParse(input);
+    // console.log("Result, ", result);
+    if (!result.success) {
+      const fieldErrors = result.error.formErrors.fieldErrors;
+      setError(fieldErrors as Partial<MenuFormSchema>);
+      // console.log("Errors-: ", error);
+
+      return;
+    }
+
+    setError({});
+
     console.log(input);
   };
   return (
@@ -95,6 +103,11 @@ export const AddMenu = () => {
                   placeholder="Enter a menu name"
                   onChange={changeEventHandler}
                 />
+                {error && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {error.name}
+                  </span>
+                )}
               </div>
               <div>
                 <Label>Description</Label>
@@ -105,6 +118,11 @@ export const AddMenu = () => {
                   placeholder="Enter a menu description"
                   onChange={changeEventHandler}
                 />
+                {error && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {error.description}
+                  </span>
+                )}
               </div>
               <div>
                 <Label>Price in (Rupees)</Label>
@@ -115,6 +133,11 @@ export const AddMenu = () => {
                   placeholder="Enter menu price"
                   onChange={changeEventHandler}
                 />
+                {error && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {error.price}
+                  </span>
+                )}
               </div>
               <div>
                 <Label>Upload Menu Image</Label>
@@ -129,6 +152,11 @@ export const AddMenu = () => {
                     })
                   }
                 />
+                {error && error.image && typeof error.image === "string" && (
+                  <span className="text-xs text-red-600 font-medium">
+                    {error.image}
+                  </span>
+                )}
               </div>
               <DialogFooter className="mt-5">
                 {loading ? (
