@@ -14,13 +14,14 @@ import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import Image from "@/assets/hero_pizza.png";
 import { EditMenu } from "./EditMenu";
+import { MenuFormSchema } from "@/schema/menuSchema";
 
-type Menu = {
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-};
+// type Menu = {
+//   name: string;
+//   description: string;
+//   price: number;
+//   image: string | File | undefined;
+// };
 
 const menus = [
   {
@@ -50,7 +51,7 @@ export const AddMenu = () => {
   const loading = false;
 
   // Select menu for edit
-  const [selectedMenu, setSelectedMenu] = useState<Menu>();
+  const [selectedMenu, setSelectedMenu] = useState<MenuFormSchema>();
 
   const changeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -146,7 +147,7 @@ export const AddMenu = () => {
         </Dialog>
       </div>
 
-      {menus.map((menu: Menu, idx: number) => (
+      {menus.map((menu: MenuFormSchema, idx: number) => (
         <div key={idx} className="mt-6 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4 md:p-4 p-2 shadow-md rounded-lg border">
             <img
@@ -177,7 +178,11 @@ export const AddMenu = () => {
         </div>
       ))}
 
-      <EditMenu selectedMenu={selectedMenu} editOpen={editOpen} setEditOpen={setEditOpen} />
+      <EditMenu
+        selectedMenu={selectedMenu}
+        editOpen={editOpen}
+        setEditOpen={setEditOpen}
+      />
     </div>
   );
 };

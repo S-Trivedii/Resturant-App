@@ -11,20 +11,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-
-type Menu = {
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-};
+import { MenuFormSchema } from "@/schema/menuSchema";
 
 export const EditMenu = ({
   selectedMenu,
   editOpen,
   setEditOpen,
 }: {
-  selectedMenu: Menu | undefined;
+  selectedMenu: MenuFormSchema | undefined;
   editOpen: boolean;
   setEditOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
