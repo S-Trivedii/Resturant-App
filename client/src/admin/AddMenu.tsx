@@ -69,6 +69,7 @@ export const AddMenu = () => {
       return;
     }
 
+    // No error
     setError({});
 
     console.log(input);
