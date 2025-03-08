@@ -52,7 +52,7 @@ export const Navabar = () => {
           <div className="flex items-center gap-6">
             <Link to="/">Home</Link>
             <Link to="/profile">Profile</Link>
-            <Link to="/order">Order</Link>
+            <Link to="/order/status">Order</Link>
 
             {admin && (
               <Menubar>
